@@ -5,8 +5,8 @@ import javax.swing.*;
 import javax.swing.border.*;
 import java.net.URL;
 import javax.imageio.ImageIO;
-import java.io.*;
-import java.io.FileReader;
+import java.io.File;
+import java.io.BufferedWriter;
 import java.util.Scanner;
 import java.util.ArrayList;
 
@@ -28,7 +28,6 @@ public class Main {
 
     ArrayList <ArrayList <Integer>> tempBoard =  new ArrayList <ArrayList <Integer>>(); 
         // temp board to store the currently read board 
-
     // private final JLabel message = new JLabel(
     //         "Chess Champ is ready to play!");
     private static final String COLS = "ABCDEFGH";
@@ -53,6 +52,7 @@ public class Main {
         
         int lineNum = 0; // Line number checker, not 0 based 
         int currRowCtr = 0; // counter for the current row in the current board 
+        int tokenCtr = 0; // token counter / y coordinate
 
         try{
               readFile = new File("input.in");  
@@ -72,9 +72,13 @@ public class Main {
                 Integer currBoardSize = Integer.parseInt(boardSizeLine);
                 boardSizes.add(currBoardSize);
 
+                ArrayList <Coordinate> tempChancies = new ArrayList<Coordinate>();
                 // get the next lines/rows for the current board's input 
 
+                // i => number of rows
                 for (int i=0; i<boardSizes.get(currBoardCtr); i++){
+                    tokenCtr = 0;
+
                     tempBoard.add(new ArrayList <Integer>());
                     String rowLine = br1.nextLine();
                     // System.out.println(rowLine);
@@ -82,15 +86,26 @@ public class Main {
                     String[] tokens = rowLine.split(" ");
                     // store each token to current row
                     for (String token : tokens){
+                        if (token.equals("1")){
+                            tempChancies.add(new Coordinate(i+1, tokenCtr+1));
+                        }
                         tempBoard.get(currRowCtr).add(Integer.parseInt(token));
+                        tokenCtr++; 
                     }
+
                     currRowCtr++;
                 }
 
-                Board newBoard = new Board(tempBoard, boardSizes.get(currBoardCtr)); 
+                Board newBoard = new Board(tempBoard, boardSizes.get(currBoardCtr), tempChancies); 
                 newBoard.printBoard();
                 System.out.println();
+                newBoard.printChancies();
+                System.out.println();
+                newBoard.solveBoard();
+                System.out.println();
 
+
+                // added new board with initial chancies
                 boards.add(newBoard);
 
                 // delete the tempBoard
@@ -100,12 +115,19 @@ public class Main {
                 tempBoard.clear();
 
                 currRowCtr = 0; // reset to the first row 
+                tokenCtr = 0; // reset token / y ctr
                 currBoardCtr++; // next board 
                 // System.out.println();
               }
-            }catch(Exception e){
-             System.out.println("Some error " + e);
-          }
+
+            currBoardCtr = 0; // return to 0
+        }catch(Exception e){
+            System.out.println("Some error " + e);
+        }
+    }
+
+    public void solve(){
+
     }
 
     public final void initializeGui() {

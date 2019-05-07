@@ -3,12 +3,14 @@ import java.util.ArrayList;
 public class Board {
 	int dimension = 0;
 	ArrayList <ArrayList<Integer>> board = new ArrayList<ArrayList<Integer>>();
+	ArrayList <Coordinate> chancies = new ArrayList<Coordinate>();
 
-	public Board(ArrayList <ArrayList<Integer>> temp, int dimension){
+	public Board(ArrayList <ArrayList<Integer>> temp, int dimension, ArrayList <Coordinate> chancies){
 		for (ArrayList<Integer> row : temp){
 			this.board.add(row);
 		}
 
+		this.chancies = chancies;
 		this.dimension = dimension;
 	}
 
@@ -19,5 +21,164 @@ public class Board {
 			}
 			System.out.println();
 		}
+	}
+
+	public void printChancies(){
+		for (Coordinate chancy : this.chancies){
+			System.out.println(chancy.x + "," + chancy.y);
+		}
+	}
+
+	// public void printOpt(int [][] option, int N){
+	// 	int i;
+	// 	int j;
+
+	// 	for (i=1; i<N+1; i++){
+	// 		for (j=1; j<N+1; j++){
+	// 			System.out.println("%d ", option[i][j]);
+	// 		}
+	// 		System.out.println("\n");
+	// 	}
+	// 	System.out.println("\n");
+
+	// }
+
+
+	// public void printNOpt(int [] nopts, int N){
+	// 	int i;
+
+	// 	for (i = 0; i < N+2; ++i)
+	// 	{
+	// 		System.out.println("%d ", nopts[i]);
+	// 	}
+	// 	System.out.println("\n");
+	// }
+
+	int hasChancy(int row){
+		int i;
+
+		for (i=0; i<this.chancies.size(); i++){
+			// println("Chancy.x %d %d\n", chancies[i].x, row);
+			if (chancies.get(i).x == row){
+				// may chancy na nagexist sa current row of interest
+				return 1;
+			}
+		}
+		return 0;
+	}
+
+	int checkOthers(int x, int y){
+		int i;
+
+		for (i=0; i<this.chancies.size(); i++){
+			if (this.chancies.get(i).x == x || this.chancies.get(i).y == y) return 1;
+
+
+			if (((this.chancies.get(i).x == x+2 || this.chancies.get(i).x == x-2) && (this.chancies.get(i).y == y-1 || this.chancies.get(i).y == y+1)) ||
+					((this.chancies.get(i).x == x+1 || this.chancies.get(i).x == x-1) && (this.chancies.get(i).y == y-2 || this.chancies.get(i).y == y+2)))
+						return 1;
+
+		}
+
+		return 0;
+	}
+
+	public void solveBoard(){
+
+		int n = this.dimension+2;
+		int a, b; 
+		int [] nopts = new int[n];
+		int [][] option = new int[n][n];
+
+		int start, move, k, candidate, prev, counter = 0;
+		move = start = 0;
+
+		for (a=0; a<n; a++){
+			nopts[a] = 0;
+		}
+
+		for (a=0; a<n; a++){
+			for (b=0; b<n; b++){
+				option[a][b] = 0;
+			}
+		}
+
+		for (a=0; a<chancies.size(); a++){
+			// println("populating\n");
+			// check chancy.x -> add chancy.y to options[x]
+			
+			option[this.chancies.get(a).x][1] = this.chancies.get(a).y; 
+			// option[chancies[a].x][1] = chancies[a].y; // row-based
+			nopts[this.chancies.get(a).x] = 1;
+		}
+
+		// printNOpt(nopts, this.dimension);
+		// printOpt(option, this.dimension);
+
+		nopts[start]= 1;
+
+		while (nopts[start] >0) { 											// while dummy stack is not empty
+
+			if(nopts[move]>0) {
+				move++;
+
+
+				// FOUND SOLUTION
+				if (move == this.dimension+1){
+					for(k=1; k<move; k++) System.out.println(k + "," + option[k][nopts[k]] + "   ");
+					// Store found solution for UI
+
+					System.out.println();
+					if (k != 1) counter++; // count only if there's an actual solution
+
+				// MOVE == 1
+				}else if(move == 1){
+					if (hasChancy(move) == 0){
+						for(candidate = this.dimension; candidate >=1; candidate--) {
+							if (checkOthers(move, candidate) == 1) continue;
+
+							nopts[move]++;
+							option[move][nopts[move]] = candidate;
+						}
+					}else{
+						nopts[move] = 1;
+					}
+
+				// MOVE != 1
+				}else {
+
+					if (hasChancy(move) == 0){
+
+						for(candidate=this.dimension; candidate>=1; candidate--) {
+							for(k=move-1;k>=1;k--){
+								if(candidate == option[k][nopts[k]]) break;
+							}
+
+							if (checkOthers(move, candidate) == 1) continue; 
+
+							prev = move-1;
+							// check knight moves
+							if(
+								((option[prev][nopts[prev]] == candidate+2) && (candidate+2 <= this.dimension)) ||
+								((option[prev][nopts[prev]] == candidate-2) && (candidate-2 > 0))
+								) continue;
+
+							prev = prev-1;
+							if(
+								((option[prev][nopts[prev]] == candidate+1) && (candidate+1 <= this.dimension)) ||
+								((option[prev][nopts[prev]] == candidate-1) && (candidate-1 > 0))
+								) continue;
+							if (k<1) option[move][++nopts[move]] = candidate;
+						}
+					} else nopts[move] = 1;
+				}
+
+		// BACKTRACKING STEP 
+			}else {															// backtracking step
+				move--;														// current position has exhausted candidates so move to previous
+				nopts[move]--;												// remove current top on this stack
+			}
+		}
+		System.out.println("Number of solutions: "+ counter);
 	}
 }
