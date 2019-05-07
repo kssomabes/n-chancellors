@@ -9,9 +9,11 @@ import javax.imageio.ImageIO;
 public class ChessGUI {
 
     private final JPanel gui = new JPanel(new BorderLayout(3, 3));
-    private JButton[][] chessBoardSquares = new JButton[8][8];
+    // private JButton[][] chessBoardSquares = new JButton[8][8];
+    private JButton[][] chessBoardSquares;
     private Image[][] chessPieceImages = new Image[2][6];
     private JPanel chessBoard;
+    public int dimension;
     // private final JLabel message = new JLabel(
     //         "Chess Champ is ready to play!");
     private static final String COLS = "ABCDEFGH";
@@ -22,7 +24,9 @@ public class ChessGUI {
     // };
     public static final int BLACK = 0, WHITE = 1;
 
-    ChessGUI() {
+    ChessGUI(int dimension) {
+        this.dimension = dimension;
+        this.chessBoardSquares = new JButton[dimension][dimension];
         initializeGui();
     }
 
@@ -52,7 +56,7 @@ public class ChessGUI {
 
         // gui.add(new JLabel("?"), BorderLayout.LINE_START);
 
-        chessBoard = new JPanel(new GridLayout(0, 9)) {
+        chessBoard = new JPanel(new GridLayout(0, (dimension+1))) {
 
             /**
              * Override the preferred size to return the largest it can, in
@@ -83,7 +87,7 @@ public class ChessGUI {
             }
         };
         chessBoard.setBorder(new CompoundBorder(
-                new EmptyBorder(8,8,8,8),
+                new EmptyBorder(dimension,dimension,dimension,dimension),
                 new LineBorder(Color.BLACK)
                 ));
         // Set the BG to be ochre
@@ -123,14 +127,14 @@ public class ChessGUI {
          */
         chessBoard.add(new JLabel(""));
         // fill the top row
-        for (int ii = 0; ii < 8; ii++) {
+        for (int ii = 0; ii < dimension; ii++) {
             chessBoard.add(
                     new JLabel(COLS.substring(ii, ii + 1),
                     SwingConstants.CENTER));
         }
         // fill the black non-pawn piece row
-        for (int ii = 0; ii < 8; ii++) {
-            for (int jj = 0; jj < 8; jj++) {
+        for (int ii = 0; ii < dimension; ii++) {
+            for (int jj = 0; jj < dimension; jj++) {
                 switch (jj) {
                     case 0:
                         chessBoard.add(new JLabel("" + (9-(ii + 1)),
@@ -150,10 +154,10 @@ public class ChessGUI {
     private class ButtonHandler implements ActionListener{
     	public void actionPerformed(ActionEvent e){
     		Object source = e.getSource();
-    		for(int i=0;i<8;i++){
-    			for(int j=0;j<8;j++){
+    		for(int i=0;i<dimension;i++){
+    			for(int j=0;j<dimension;j++){
     				if(source==chessBoardSquares[i][j]){
-    					System.out.println("ops");
+    					System.out.println("i: "+i+" j: "+j);
     					processClick(i,j);
     					return;
     				}
@@ -166,21 +170,21 @@ public class ChessGUI {
         return gui;
     }
 
-    private final void createImages() {
-        try {
-            URL url = new URL("http://i.stack.imgur.com/memI0.png");
-            BufferedImage bi = ImageIO.read(url);
-            for (int ii = 0; ii < 2; ii++) {
-                for (int jj = 0; jj < 6; jj++) {
-                    chessPieceImages[ii][jj] = bi.getSubimage(
-                            jj * 64, ii * 64, 64, 64);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
-    }
+    // private final void createImages() {
+    //     try {
+    //         URL url = new URL("http://i.stack.imgur.com/memI0.png");
+    //         BufferedImage bi = ImageIO.read(url);
+    //         for (int ii = 0; ii < 2; ii++) {
+    //             for (int jj = 0; jj < 6; jj++) {
+    //                 chessPieceImages[ii][jj] = bi.getSubimage(
+    //                         jj * 64, ii * 64, 64, 64);
+    //             }
+    //         }
+    //     } catch (Exception e) {
+    //         e.printStackTrace();
+    //         System.exit(1);
+    //     }
+    // }
 
     /**
      * Initializes the icons of the initial chess board piece places
@@ -212,7 +216,7 @@ public class ChessGUI {
 
             @Override
             public void run() {
-                ChessGUI cg = new ChessGUI();
+                ChessGUI cg = new ChessGUI(4);
 
                 JFrame f = new JFrame("ChessChamp");
                 f.add(cg.getGui());
