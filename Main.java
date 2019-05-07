@@ -138,14 +138,14 @@ public class Main {
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
         gui.add(tools, BorderLayout.PAGE_START);
-        // Action nextBoardAction = new AbstractAction("Next") {
+        Action nextBoardAction = new AbstractAction("Next") {
 
-        //     @Override
-        //     public void actionPerformed(ActionEvent e) {
-        //         // setupNewGame();
-        //     }
-        // };
-        // tools.add(nextBoardAction);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                nextBoard();
+            }
+        };
+        tools.add(nextBoardAction);
         // tools.add(new JButton("Prev")); // TODO - add functionality!
         // tools.add(new JButton("Next")); // TODO - add functionality!
 
@@ -155,11 +155,15 @@ public class Main {
         // tools.add(message);
 
         // gui.add(new JLabel("?"), BorderLayout.LINE_START);
+        loadBoard();
 
         
     }
 
     private void loadBoard(){
+        dimension = boardSizes.get(uiBoardCounter);
+        chessBoardSquares = new JButton[dimension][dimension];
+
         chessBoard = new JPanel(new GridLayout(0, boardSizes.get(uiBoardCounter))) {
 
             /**
@@ -302,6 +306,9 @@ public class Main {
     //     }
     // }
 
+    private void nextBoard() {
+        uiBoardCounter+=1;
+    }
     
     public static void main(String[] args) {
         
