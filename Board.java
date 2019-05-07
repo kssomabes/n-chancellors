@@ -4,6 +4,7 @@ public class Board {
 	int dimension = 0;
 	ArrayList <ArrayList<Integer>> board = new ArrayList<ArrayList<Integer>>();
 	ArrayList <Coordinate> chancies = new ArrayList<Coordinate>();
+	ArrayList <Coordinate[]> solutions = new ArrayList <Coordinate[]>();
 
 	public Board(ArrayList <ArrayList<Integer>> temp, int dimension, ArrayList <Coordinate> chancies){
 		for (ArrayList<Integer> row : temp){
@@ -26,6 +27,15 @@ public class Board {
 	public void printChancies(){
 		for (Coordinate chancy : this.chancies){
 			System.out.println(chancy.x + "," + chancy.y);
+		}
+	}
+
+	public void printSolutions(){
+		for (Coordinate[] solution : this.solutions){
+			for (int i=0; i<this.dimension; i++){
+				System.out.println(solution[i].x + "," + solution[i].y);
+			}
+			System.out.println();
 		}
 	}
 
@@ -125,9 +135,15 @@ public class Board {
 
 				// FOUND SOLUTION
 				if (move == this.dimension+1){
-					for(k=1; k<move; k++) System.out.println(k + "," + option[k][nopts[k]] + "   ");
-					// Store found solution for UI
+					Coordinate [] solved = new Coordinate[this.dimension];
 
+					for(k=1; k<move; k++){
+						System.out.println(k + "," + option[k][nopts[k]] + "   ");	
+						solved[k-1].x =  k;
+						solved[k-1].y = option[k][nopts[k]];
+					} 
+					// Store found solution for UI
+					solutions.add(solved);
 					System.out.println();
 					if (k != 1) counter++; // count only if there's an actual solution
 
