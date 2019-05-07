@@ -14,23 +14,24 @@ public class Main {
 
     private final JPanel gui = new JPanel(new BorderLayout(3, 3));
     // private JButton[][] chessBoardSquares = new JButton[8][8];
-    private JButton next = new JButton("NEXT");
-    private JButton prev = new JButton("PREVIOUS");
-
+    
     private JButton[][] chessBoardSquares;
     private Image[][] chessPieceImages = new Image[2][6];
     private JPanel chessBoard;
     public int dimension;
     int boardCount = 0; // stores the number of boards to be read
     int currBoardCtr = 0; // current board counter
+    int uiBoardCounter = 0;
+
     ArrayList <Integer> boardSizes = new ArrayList<Integer>(); // store the board sizes
     ArrayList <Board> boards = new ArrayList<Board>();
+    // ArrayList <BoardSquares> uiBoards = new ArrayList<BoardSquares>();
 
     ArrayList <ArrayList <Integer>> tempBoard =  new ArrayList <ArrayList <Integer>>(); 
         // temp board to store the currently read board 
     // private final JLabel message = new JLabel(
     //         "Chess Champ is ready to play!");
-    private static final String COLS = "ABCDEFGH";
+    // private static final String COLS = "ABCDEFGH";
     // public static final int QUEEN = 0, KING = 1,
     //         ROOK = 2, KNIGHT = 3, BISHOP = 4, PAWN = 5;
     // public static final int[] STARTING_ROW = {
@@ -40,8 +41,7 @@ public class Main {
 
     public Main() {
         readFile();
-        this.dimension = boardSizes.get(0);
-        this.chessBoardSquares = new JButton[this.dimension][this.dimension];
+        
         initializeGui();
     }
 
@@ -131,24 +131,24 @@ public class Main {
     }
 
     public final void initializeGui() {
-        // create the images for the chess pieces
-        // createImages();
+        
 
         // set up the main GUI
         gui.setBorder(new EmptyBorder(5, 5, 5, 5));
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
         gui.add(tools, BorderLayout.PAGE_START);
-        // Action newGameAction = new AbstractAction("New") {
+        // Action nextBoardAction = new AbstractAction("Next") {
 
         //     @Override
         //     public void actionPerformed(ActionEvent e) {
-        //         setupNewGame();
+        //         // setupNewGame();
         //     }
         // };
-        // tools.add(newGameAction);
-        tools.add(new JButton("Prev")); // TODO - add functionality!
-        tools.add(new JButton("Next")); // TODO - add functionality!
+        // tools.add(nextBoardAction);
+        // tools.add(new JButton("Prev")); // TODO - add functionality!
+        // tools.add(new JButton("Next")); // TODO - add functionality!
+
         tools.addSeparator();
         tools.add(new JButton("Solve")); // TODO - add functionality!
         // tools.addSeparator();
@@ -156,7 +156,11 @@ public class Main {
 
         // gui.add(new JLabel("?"), BorderLayout.LINE_START);
 
-        chessBoard = new JPanel(new GridLayout(0, (dimension+1))) {
+        
+    }
+
+    private void loadBoard(){
+        chessBoard = new JPanel(new GridLayout(0, boardSizes.get(uiBoardCounter))) {
 
             /**
              * Override the preferred size to return the largest it can, in
@@ -187,7 +191,7 @@ public class Main {
             }
         };
         chessBoard.setBorder(new CompoundBorder(
-                new EmptyBorder(dimension,dimension,dimension,dimension),
+                new EmptyBorder(boardSizes.get(uiBoardCounter),boardSizes.get(uiBoardCounter),boardSizes.get(uiBoardCounter),boardSizes.get(uiBoardCounter)),
                 new LineBorder(Color.BLACK)
                 ));
         // Set the BG to be ochre
@@ -225,24 +229,11 @@ public class Main {
         /*
          * fill the chess board
          */
-        chessBoard.add(new JLabel(""));
-        // fill the top row
-        for (int ii = 0; ii < dimension; ii++) {
-            chessBoard.add(
-                    new JLabel(COLS.substring(ii, ii + 1),
-                    SwingConstants.CENTER));
-        }
         // fill the black non-pawn piece row
         for (int ii = 0; ii < dimension; ii++) {
             for (int jj = 0; jj < dimension; jj++) {
-                switch (jj) {
-                    case 0:
-                        chessBoard.add(new JLabel("" + (9-(ii + 1)),
-                                SwingConstants.CENTER));
-                    default:
-                        chessBoard.add(chessBoardSquares[jj][ii]);
-                        chessBoardSquares[jj][ii].addActionListener(buttonHandler);
-                }
+                chessBoard.add(chessBoardSquares[jj][ii]);
+                chessBoardSquares[jj][ii].addActionListener(buttonHandler);
             }
         }
     }
@@ -311,19 +302,14 @@ public class Main {
     //     }
     // }
 
+    
     public static void main(String[] args) {
         
         Main cg = new Main();
-        JFrame f = new JFrame("ChessChamp");
+        JFrame f = new JFrame("Where is Chancy?");
         f.add(cg.getGui());
-        // Ensures JVM closes after frame(s) closed and
-        // all non-daemon threads are finished
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        // See https://stackoverflow.com/a/7143398/418556 for demo.
         f.setLocationByPlatform(true);
-
-        // ensures the frame is the minimum size it needs to be
-        // in order display the components within it
         f.pack();
         // ensures the minimum size is enforced.
         f.setMinimumSize(f.getSize());
