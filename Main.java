@@ -114,9 +114,9 @@ public class Main {
 
         // set up the main GUI
         gui.setBorder(new EmptyBorder(5, 5, 5, 5));
-        // JToolBar tools = new JToolBar();
-        // tools.setFloatable(false);
-        // gui.add(tools, BorderLayout.PAGE_START);
+        JToolBar tools = new JToolBar();
+        tools.setFloatable(false);
+        gui.add(tools, BorderLayout.PAGE_START);
         // Action newGameAction = new AbstractAction("New") {
 
         //     @Override
@@ -125,10 +125,10 @@ public class Main {
         //     }
         // };
         // tools.add(newGameAction);
-        // tools.add(new JButton("Save")); // TODO - add functionality!
-        // tools.add(new JButton("Restore")); // TODO - add functionality!
-        // tools.addSeparator();
-        // tools.add(new JButton("Resign")); // TODO - add functionality!
+        tools.add(new JButton("Prev")); // TODO - add functionality!
+        tools.add(new JButton("Next")); // TODO - add functionality!
+        tools.addSeparator();
+        tools.add(new JButton("Solve")); // TODO - add functionality!
         // tools.addSeparator();
         // tools.add(message);
 
@@ -291,30 +291,20 @@ public class Main {
 
     public static void main(String[] args) {
         
+        Main cg = new Main();
+        JFrame f = new JFrame("ChessChamp");
+        f.add(cg.getGui());
+        // Ensures JVM closes after frame(s) closed and
+        // all non-daemon threads are finished
+        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        // See https://stackoverflow.com/a/7143398/418556 for demo.
+        f.setLocationByPlatform(true);
 
-        Runnable r = new Runnable() {
-
-            @Override
-            public void run() {
-                Main cg = new Main();
-                JFrame f = new JFrame("ChessChamp");
-                f.add(cg.getGui());
-                // Ensures JVM closes after frame(s) closed and
-                // all non-daemon threads are finished
-                f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                // See https://stackoverflow.com/a/7143398/418556 for demo.
-                f.setLocationByPlatform(true);
-
-                // ensures the frame is the minimum size it needs to be
-                // in order display the components within it
-                f.pack();
-                // ensures the minimum size is enforced.
-                f.setMinimumSize(f.getSize());
-                f.setVisible(true);
-            }
-        };
-        // Swing GUIs should be created and updated on the EDT
-        // http://docs.oracle.com/javase/tutorial/uiswing/concurrency
-        SwingUtilities.invokeLater(r);
+        // ensures the frame is the minimum size it needs to be
+        // in order display the components within it
+        f.pack();
+        // ensures the minimum size is enforced.
+        f.setMinimumSize(f.getSize());
+        f.setVisible(true);
     }
 }
