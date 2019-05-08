@@ -101,8 +101,8 @@ public class Main {
                 Board newBoard = new Board(tempBoard, boardSizes.get(currBoardCtr), tempChancies); 
                 newBoard.printBoard();
                 System.out.println();
-                newBoard.printChancies();
-                System.out.println();
+                // newBoard.printChancies();
+                // System.out.println();
                 newBoard.solveBoard();
                 System.out.println();
 

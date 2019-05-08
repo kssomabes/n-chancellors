@@ -5,6 +5,7 @@ public class Board {
 	ArrayList <ArrayList<Integer>> board = new ArrayList<ArrayList<Integer>>();
 	ArrayList <Coordinate> chancies = new ArrayList<Coordinate>();
 	ArrayList <Coordinate[]> solutions = new ArrayList <Coordinate[]>();
+	int solvable = -1; // -1 = untested, 0 = true, 1 = false -> to cache solutions
 
 	public Board(ArrayList <ArrayList<Integer>> temp, int dimension, ArrayList <Coordinate> chancies){
 		for (ArrayList<Integer> row : temp){
@@ -25,6 +26,7 @@ public class Board {
 	}
 
 	public void printChancies(){
+		System.out.println("List of Chancies");
 		for (Coordinate chancy : this.chancies){
 			chancy.printXY();
 		}
@@ -39,30 +41,30 @@ public class Board {
 		}
 	}
 
-	// public void printOpt(int [][] option, int N){
-	// 	int i;
-	// 	int j;
+	public void printOpt(int [][] option, int N){
+		int i;
+		int j;
 
-	// 	for (i=1; i<N+1; i++){
-	// 		for (j=1; j<N+1; j++){
-	// 			System.out.println("%d ", option[i][j]);
-	// 		}
-	// 		System.out.println("\n");
-	// 	}
-	// 	System.out.println("\n");
+		for (i=1; i<N+1; i++){
+			for (j=1; j<N+1; j++){
+				System.out.print(option[i][j] + " ");
+			}
+			System.out.println("");
+		}
+		System.out.println("");
 
-	// }
+	}
 
 
-	// public void printNOpt(int [] nopts, int N){
-	// 	int i;
+	public void printNOpt(int [] nopts, int N){
+		int i;
 
-	// 	for (i = 0; i < N+2; ++i)
-	// 	{
-	// 		System.out.println("%d ", nopts[i]);
-	// 	}
-	// 	System.out.println("\n");
-	// }
+		for (i = 0; i < N+2; ++i)
+		{
+			System.out.print(nopts[i] + " ");
+		}
+		System.out.println("\n");
+	}
 
 	int hasChancy(int row){
 		int i;
@@ -77,10 +79,14 @@ public class Board {
 		return 0;
 	}
 
+	// 0 if valid, 1 if invalid
 	int checkOthers(int x, int y){
 		int i;
 
 		for (i=0; i<this.chancies.size(); i++){
+
+			if (this.chancies.get(i).x == x && this.chancies.get(i).y == y) continue; // don't compare to self
+
 			if (this.chancies.get(i).x == x || this.chancies.get(i).y == y) return 1;
 
 
@@ -105,6 +111,10 @@ public class Board {
 
 	public void solveBoard(){
 
+		// INVALID INITIAL CHANCIES 
+		if (this.chancies.size() > this.dimension){
+			this.solvable = 1;
+		}
 		int n = this.dimension+2;
 		int a, b; 
 		int [] nopts = new int[n];
@@ -123,13 +133,17 @@ public class Board {
 			}
 		}
 
+		// CHECK IF INITIAL CHANCIES ARE VALID
 		for (a=0; a<chancies.size(); a++){
-			// println("populating\n");
 			// check chancy.x -> add chancy.y to options[x]
 			
-			option[this.chancies.get(a).x][1] = this.chancies.get(a).y; 
 			// option[chancies[a].x][1] = chancies[a].y; // row-based
-			nopts[this.chancies.get(a).x] = 1;
+			if (checkOthers(this.chancies.get(a).x, this.chancies.get(a).y) == 0){
+				if (option[this.chancies.get(a).x][1] == 0){
+					option[this.chancies.get(a).x][1] = this.chancies.get(a).y; 
+				}else this.solvable = 1;
+				nopts[this.chancies.get(a).x] = 1;
+			}else this.solvable = 1;
 		}
 
 		// printNOpt(nopts, this.dimension);
@@ -137,7 +151,8 @@ public class Board {
 
 		nopts[start]= 1;
 
-		while (nopts[start] >0) { 											// while dummy stack is not empty
+		if (this.solvable != 1){
+			while (nopts[start] >0) { 											// while dummy stack is not empty
 
 			if(nopts[move]>0) {
 				move++;
@@ -148,12 +163,10 @@ public class Board {
 					Coordinate [] solved = new Coordinate[this.dimension];
 
 					for(k=1; k<move; k++){
-						System.out.println(k + "," + option[k][nopts[k]] + "   ");	
 						solved[k-1] = new Coordinate(k, option[k][nopts[k]]);
 					} 
 					// Store found solution for UI
 					solutions.add(solved);
-					System.out.println();
 					if (k != 1) counter++; // count only if there's an actual solution
 
 				// MOVE == 1
@@ -204,7 +217,10 @@ public class Board {
 				nopts[move]--;												// remove current top on this stack
 			}
 		}
-		System.out.println("Number of solutions: "+ counter);
-		showSolutions();
+	}
+		
+	System.out.println("Number of solutions: " + counter);
+	// showSolutions();
+	
 	}
 }
