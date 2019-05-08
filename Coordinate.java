@@ -8,4 +8,7 @@ public class Coordinate {
 		this.y = y;
 	}
 
+	public void printXY(){
+		System.out.print("(" + this.x + "," + this.y + ")");
+	}
 }

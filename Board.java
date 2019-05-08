@@ -26,7 +26,7 @@ public class Board {
 
 	public void printChancies(){
 		for (Coordinate chancy : this.chancies){
-			System.out.println(chancy.x + "," + chancy.y);
+			chancy.printXY();
 		}
 	}
 
@@ -93,6 +93,16 @@ public class Board {
 		return 0;
 	}
 
+	public void showSolutions(){
+		for (int i=0; i<this.solutions.size(); i++){
+			System.out.println("Solution #" +(i+1) + ": ");
+				for (Coordinate chancy : this.solutions.get(i)){
+					chancy.printXY();
+				}
+			System.out.println();
+		}
+	}
+
 	public void solveBoard(){
 
 		int n = this.dimension+2;
@@ -139,8 +149,7 @@ public class Board {
 
 					for(k=1; k<move; k++){
 						System.out.println(k + "," + option[k][nopts[k]] + "   ");	
-						solved[k-1].x =  k;
-						solved[k-1].y = option[k][nopts[k]];
+						solved[k-1] = new Coordinate(k, option[k][nopts[k]]);
 					} 
 					// Store found solution for UI
 					solutions.add(solved);
@@ -196,5 +205,6 @@ public class Board {
 			}
 		}
 		System.out.println("Number of solutions: "+ counter);
+		showSolutions();
 	}
 }

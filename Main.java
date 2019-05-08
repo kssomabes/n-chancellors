@@ -73,6 +73,8 @@ public class Main {
                 boardSizes.add(currBoardSize);
 
                 ArrayList <Coordinate> tempChancies = new ArrayList<Coordinate>();
+                // positions of the initial chancies from the input file
+
                 // get the next lines/rows for the current board's input 
 
                 // i => number of rows
