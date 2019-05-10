@@ -2,17 +2,31 @@ import java.util.ArrayList;
 
 public class Board {
 	int dimension = 0;
-	ArrayList <ArrayList<Integer>> board = new ArrayList<ArrayList<Integer>>();
+	public ArrayList <ArrayList<Integer>> board = new ArrayList<ArrayList<Integer>>();
 	ArrayList <Coordinate> chancies = new ArrayList<Coordinate>();
 	ArrayList <Coordinate[]> solutions = new ArrayList <Coordinate[]>();
 	int solvable = -1; // -1 = untested, 0 = true, 1 = false -> to cache solutions
 
 	public Board(ArrayList <ArrayList<Integer>> temp, int dimension, ArrayList <Coordinate> chancies){
-		for (ArrayList<Integer> row : temp){
-			this.board.add(row);
+		// for (ArrayList<Integer> row : temp){
+		// // 	for (Integer col : row){
+		// // 		this.board.get(indexOf(row)).add(col);
+		// // 	}
+		// 	this.board.add(row);
+		// }
+
+		for (int i=0; i<temp.size(); i++){
+			this.board.add(new ArrayList<Integer>());
+			for (Integer e : temp.get(i)){
+				this.board.get(i).add(new Integer(e));
+			}
 		}
 
-		this.chancies = chancies;
+		// printBoard();
+
+		for (Coordinate chancy : chancies){
+			this.chancies.add(chancy);
+		}
 		this.dimension = dimension;
 	}
 
@@ -52,7 +66,6 @@ public class Board {
 			System.out.println("");
 		}
 		System.out.println("");
-
 	}
 
 
@@ -211,16 +224,30 @@ public class Board {
 					} else nopts[move] = 1;
 				}
 
-		// BACKTRACKING STEP 
-			}else {															// backtracking step
-				move--;														// current position has exhausted candidates so move to previous
-				nopts[move]--;												// remove current top on this stack
+			// BACKTRACKING STEP 
+				}else {															// backtracking step
+					move--;														// current position has exhausted candidates so move to previous
+					nopts[move]--;												// remove current top on this stack
+				}
 			}
 		}
-	}
 		
-	System.out.println("Number of solutions: " + counter);
-	// showSolutions();
-	
+		System.out.println("Number of solutions: " + counter);
+		// showSolutions();
 	}
+
+	public void modifyBoard(int addChancy, int i, int j){
+		if (addChancy == 1){
+			this.chancies.add(new Coordinate(i, j));  
+			this.board.get(i-1).set(j-1, 1);
+		} else {
+			this.chancies.remove(new Coordinate(i, j));
+			this.board.get(i-1).set(j-1, 0);
+		}
+
+		// reset since there are changes
+		this.solvable = -1; 
+		this.solutions.clear();
+	}
+	
 }

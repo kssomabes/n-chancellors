@@ -11,4 +11,9 @@ public class Coordinate {
 	public void printXY(){
 		System.out.print("(" + this.x + "," + this.y + ")");
 	}
+
+	@Override
+  public boolean equals(Object obj) {
+      return ((this.x == ((Coordinate) obj).x) && (this.y == ((Coordinate) obj).y));
+  }
 }

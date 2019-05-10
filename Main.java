@@ -219,17 +219,24 @@ public class Main {
                 // our chess pieces are 64x64 px in size, so we'll
                 // 'fill this in' using a transparent icon..
                 ImageIcon icon = new ImageIcon(
-                        new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));
+                        new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));    
                 b.setIcon(icon);
-                if ((jj % 2 == 1 && ii % 2 == 1)
-                        //) {
-                        || (jj % 2 == 0 && ii % 2 == 0)) {
-                    b.setBackground(Color.WHITE);
-                } else {
-                    b.setBackground(Color.BLACK);
+                if (boards.get(uiBoardCounter).board.get(ii).get(jj) == 1){
+                    // Tiles with chancies 
+                    b.setBackground(Color.RED);
+                }else{
+                    if ((jj % 2 == 1 && ii % 2 == 1)
+                            //) {
+                            || (jj % 2 == 0 && ii % 2 == 0)) {
+                        b.setBackground(Color.WHITE);
+                    } else {
+                        b.setBackground(Color.BLACK);
+                    }
                 }
+                
                 chessBoardSquares[jj][ii] = b;
             }
+            System.out.println();
         }
 
         /*
@@ -245,7 +252,24 @@ public class Main {
     }
 
     private void processClick(int i, int j){
-    	chessBoardSquares[i][j].setBackground(Color.RED);
+        // uiBoardCounter holds the currently selected board, modify the board 
+
+        // boards.get(uiBoardCounter).printChancies();
+        // reverse j and i because of different orientation
+        int flag = (boards.get(uiBoardCounter).chancies.contains(new Coordinate(j+1,i+1))) ? 0 : 1;
+        // System.out.println("Flag is " + flag );    
+
+        // if flag is 0, remove chancy
+        // else if flag is 1, add chancy 
+        boards.get(uiBoardCounter).modifyBoard(flag, j+1, i+1); 
+
+        if (flag == 1) chessBoardSquares[i][j].setBackground(Color.RED);
+        else {
+            if ((j % 2 == 1 && i % 2 == 1) || (j % 2 == 0 && i % 2 == 0)) {
+                chessBoardSquares[i][j].setBackground(Color.WHITE);
+            } else {
+                chessBoardSquares[i][j].setBackground(Color.BLACK);
+            }}
     }
 
     private class ButtonHandler implements ActionListener{
@@ -254,7 +278,7 @@ public class Main {
     		for(int i=0;i<dimension;i++){
     			for(int j=0;j<dimension;j++){
     				if(source==chessBoardSquares[i][j]){
-    					System.out.println("i: "+i+" j: "+j);
+    					// System.out.println("buttonHandler " + (i+1)+ " " + (j+1));
     					processClick(i,j);
     					return;
     				}
