@@ -148,15 +148,18 @@ public class Main {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(uiBoardCounter == (boardCount-2)) {
-                    System.out.println(uiBoardCounter);
-                    setEnabled(false);
-                }
-                else setEnabled(true);
                 nextBoard();
             }
         };
         tools.add(nextBoardAction);
+        Action prevBoardAction = new AbstractAction("Prev") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                prevBoard();
+            }
+        };
+        tools.add(prevBoardAction);
         // tools.add(new JButton("Prev")); // TODO - add functionality!
         // tools.add(new JButton("Next")); // TODO - add functionality!
 
@@ -331,14 +334,22 @@ public class Main {
         return gui;
     }
 
-    
     private void nextBoard() {
-        if(uiBoardCounter !=boardCount){
-            f.remove(gui);
+        f.remove(gui);
+        if (uiBoardCounter < boardCount-1){
             uiBoardCounter+=1;
-            initializeGui();            
         }
+        initializeGui();
 
+    }
+
+    private void prevBoard() {
+        f.remove(gui);
+        if (uiBoardCounter >= 1){
+            uiBoardCounter-=1;
+        }
+        // uiBoardCounter-=1;
+        initializeGui();
     }
     
     public static void main(String[] args) {
