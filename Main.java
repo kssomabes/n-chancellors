@@ -11,9 +11,7 @@ import java.util.ArrayList;
 
 public class Main {
     private JFrame f;
-    // private JFrame f = new JFrame("Where is Chancy?");
     private JPanel gui;
-    // private JButton[][] chessBoardSquares = new JButton[8][8];
     
     private JButton[][] chessBoardSquares;
     private Image[][] chessPieceImages = new Image[2][6];
@@ -25,23 +23,20 @@ public class Main {
 
     ArrayList <Integer> boardSizes = new ArrayList<Integer>(); // store the board sizes
     ArrayList <Board> boards = new ArrayList<Board>();
-    // ArrayList <BoardSquares> uiBoards = new ArrayList<BoardSquares>();
-
+    
     ArrayList <ArrayList <Integer>> tempBoard =  new ArrayList <ArrayList <Integer>>(); 
 
     public static final int BLACK = 0, WHITE = 1;
 
     public Main() {
         readFile();
-        // f.add(cg.getGui());
+        
         f = new JFrame("Where is Chancy?");
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         f.setLocationByPlatform(true);
         f.pack();
-        // ensures the minimum size is enforced.
         f.setMinimumSize(f.getSize());
         f.setVisible(true);
-
         
         initializeGui();
     }
@@ -129,14 +124,7 @@ public class Main {
         }
     }
 
-    public void solve(){
-
-    }
-
     public final void initializeGui() {
-        System.out.println(boardSizes.get(uiBoardCounter));
-        // f = new JFrame("Where is Chancy?");
-
         gui = new JPanel(new BorderLayout(3, 3));
 
         // set up the main GUI
@@ -164,7 +152,7 @@ public class Main {
         tools.add(nextBoardAction);
         
         tools.addSeparator();
-        // tools.add(new JButton("Solve")); // TODO - add functionality!
+        
         Action solveBoardAction = new AbstractAction("Solve") {
 
             @Override
@@ -175,7 +163,7 @@ public class Main {
         tools.add(solveBoardAction);
 
         tools.addSeparator();
-        // tools.add(new JButton("Solve")); // TODO - add functionality!
+        
         Action showSolBoardAction = new AbstractAction("Show Solution") {
 
             @Override
@@ -184,13 +172,8 @@ public class Main {
             }
         };
         tools.add(showSolBoardAction);
-        // tools.addSeparator();
-        // tools.add(message);
-
-        // gui.add(new JLabel("?"), BorderLayout.LINE_START);
-        loadBoard();
-
         
+        loadBoard();        
     }
 
     private void loadBoard(){
@@ -270,13 +253,6 @@ public class Main {
 
         f.add(gui);
         f.pack();
-        // f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        // f.setLocationByPlatform(true);
-        // f.pack();
-        // // ensures the minimum size is enforced.
-        // f.setMinimumSize(f.getSize());
-        // f.setVisible(true);
-        
     }
 
     private void setButtonColor(JButton b, int x, int y){
@@ -296,12 +272,9 @@ public class Main {
 
     private void processClick(int i, int j){
         // uiBoardCounter holds the currently selected board, modify the board 
-
-        // boards.get(uiBoardCounter).printChancies();
         // reverse j and i because of different orientation
         int flag = (boards.get(uiBoardCounter).chancies.contains(new Coordinate(j+1,i+1))) ? 0 : 1;
-        // System.out.println("Flag is " + flag );    
-
+        
         // if flag is 0, remove chancy
         // else if flag is 1, add chancy 
         boards.get(uiBoardCounter).modifyBoard(flag, j+1, i+1); 
@@ -321,7 +294,6 @@ public class Main {
     		for(int i=0;i<dimension;i++){
     			for(int j=0;j<dimension;j++){
     				if(source==chessBoardSquares[i][j]){
-    					// System.out.println("buttonHandler " + (i+1)+ " " + (j+1));
     					processClick(i,j);
     					return;
     				}
@@ -348,20 +320,11 @@ public class Main {
         if (uiBoardCounter >= 1){
             uiBoardCounter-=1;
         }
-        // uiBoardCounter-=1;
         initializeGui();
     }
     
     public static void main(String[] args) {
         
         Main cg = new Main();
-        // JFrame f = new JFrame("Where is Chancy?");
-        // f.add(cg.getGui());
-        // f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        // f.setLocationByPlatform(true);
-        // f.pack();
-        // // ensures the minimum size is enforced.
-        // f.setMinimumSize(f.getSize());
-        // f.setVisible(true);
     }
 }
