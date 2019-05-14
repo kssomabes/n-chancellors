@@ -144,14 +144,7 @@ public class Main {
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
         gui.add(tools, BorderLayout.PAGE_START);
-        Action nextBoardAction = new AbstractAction("Next") {
 
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                nextBoard();
-            }
-        };
-        tools.add(nextBoardAction);
         Action prevBoardAction = new AbstractAction("Prev") {
 
             @Override
@@ -160,9 +153,16 @@ public class Main {
             }
         };
         tools.add(prevBoardAction);
-        // tools.add(new JButton("Prev")); // TODO - add functionality!
-        // tools.add(new JButton("Next")); // TODO - add functionality!
 
+        Action nextBoardAction = new AbstractAction("Next") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                nextBoard();
+            }
+        };
+        tools.add(nextBoardAction);
+        
         tools.addSeparator();
         // tools.add(new JButton("Solve")); // TODO - add functionality!
         Action solveBoardAction = new AbstractAction("Solve") {
