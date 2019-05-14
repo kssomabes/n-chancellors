@@ -1,3 +1,13 @@
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.image.BufferedImage;
+import javax.swing.*;
+import javax.swing.border.*;
+import javax.imageio.ImageIO;
+import java.io.File;
+import java.io.BufferedWriter;
+import java.util.Scanner;
+import java.util.ArrayList;
 import java.util.ArrayList;
 
 public class Board {
@@ -248,6 +258,17 @@ public class Board {
 		// reset since there are changes
 		this.solvable = -1; 
 		this.solutions.clear();
+	}
+
+	public void loadSolution(){
+		JFrame f = new JFrame("Solutions");
+		f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        f.setLocationByPlatform(true);
+        f.pack();
+        f.setMinimumSize(f.getSize());
+        f.setVisible(true);
+
+        
 	}
 	
 }

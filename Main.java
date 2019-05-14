@@ -3,7 +3,6 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 import javax.swing.border.*;
-import java.net.URL;
 import javax.imageio.ImageIO;
 import java.io.File;
 import java.io.BufferedWriter;
@@ -149,6 +148,11 @@ public class Main {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                if(uiBoardCounter == (boardCount-2)) {
+                    System.out.println(uiBoardCounter);
+                    setEnabled(false);
+                }
+                else setEnabled(true);
                 nextBoard();
             }
         };
@@ -166,6 +170,17 @@ public class Main {
             }
         };
         tools.add(solveBoardAction);
+
+        tools.addSeparator();
+        // tools.add(new JButton("Solve")); // TODO - add functionality!
+        Action showSolBoardAction = new AbstractAction("Show Solution") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boards.get(uiBoardCounter).loadSolution();
+            }
+        };
+        tools.add(showSolBoardAction);
         // tools.addSeparator();
         // tools.add(message);
 
@@ -318,9 +333,11 @@ public class Main {
 
     
     private void nextBoard() {
-        f.remove(gui);
-        uiBoardCounter+=1;
-        initializeGui();
+        if(uiBoardCounter !=boardCount){
+            f.remove(gui);
+            uiBoardCounter+=1;
+            initializeGui();            
+        }
 
     }
     
