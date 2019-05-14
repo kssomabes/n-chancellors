@@ -11,8 +11,9 @@ import java.util.Scanner;
 import java.util.ArrayList;
 
 public class Main {
-
-    private final JPanel gui = new JPanel(new BorderLayout(3, 3));
+    private JFrame f;
+    // private JFrame f = new JFrame("Where is Chancy?");
+    private JPanel gui;
     // private JButton[][] chessBoardSquares = new JButton[8][8];
     
     private JButton[][] chessBoardSquares;
@@ -28,19 +29,20 @@ public class Main {
     // ArrayList <BoardSquares> uiBoards = new ArrayList<BoardSquares>();
 
     ArrayList <ArrayList <Integer>> tempBoard =  new ArrayList <ArrayList <Integer>>(); 
-        // temp board to store the currently read board 
-    // private final JLabel message = new JLabel(
-    //         "Chess Champ is ready to play!");
-    // private static final String COLS = "ABCDEFGH";
-    // public static final int QUEEN = 0, KING = 1,
-    //         ROOK = 2, KNIGHT = 3, BISHOP = 4, PAWN = 5;
-    // public static final int[] STARTING_ROW = {
-    //     ROOK, KNIGHT, BISHOP, KING, QUEEN, BISHOP, KNIGHT, ROOK
-    // };
+
     public static final int BLACK = 0, WHITE = 1;
 
     public Main() {
         readFile();
+        // f.add(cg.getGui());
+        f = new JFrame("Where is Chancy?");
+        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        f.setLocationByPlatform(true);
+        f.pack();
+        // ensures the minimum size is enforced.
+        f.setMinimumSize(f.getSize());
+        f.setVisible(true);
+
         
         initializeGui();
     }
@@ -133,7 +135,10 @@ public class Main {
     }
 
     public final void initializeGui() {
-        
+        System.out.println(boardSizes.get(uiBoardCounter));
+        // f = new JFrame("Where is Chancy?");
+
+        gui = new JPanel(new BorderLayout(3, 3));
 
         // set up the main GUI
         gui.setBorder(new EmptyBorder(5, 5, 5, 5));
@@ -221,22 +226,9 @@ public class Main {
                 ImageIcon icon = new ImageIcon(
                         new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));    
                 b.setIcon(icon);
-                if (boards.get(uiBoardCounter).board.get(ii).get(jj) == 1){
-                    // Tiles with chancies 
-                    b.setBackground(Color.RED);
-                }else{
-                    if ((jj % 2 == 1 && ii % 2 == 1)
-                            //) {
-                            || (jj % 2 == 0 && ii % 2 == 0)) {
-                        b.setBackground(Color.WHITE);
-                    } else {
-                        b.setBackground(Color.BLACK);
-                    }
-                }
-                
+                setButtonColor(b,ii,jj);
                 chessBoardSquares[jj][ii] = b;
-            }
-            System.out.println();
+            }            
         }
 
         /*
@@ -247,6 +239,31 @@ public class Main {
             for (int jj = 0; jj < dimension; jj++) {
                 chessBoard.add(chessBoardSquares[jj][ii]);
                 chessBoardSquares[jj][ii].addActionListener(buttonHandler);
+            }
+        }
+
+        f.add(gui);
+        f.pack();
+        // f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        // f.setLocationByPlatform(true);
+        // f.pack();
+        // // ensures the minimum size is enforced.
+        // f.setMinimumSize(f.getSize());
+        // f.setVisible(true);
+        
+    }
+
+    private void setButtonColor(JButton b, int x, int y){
+        if (boards.get(uiBoardCounter).board.get(x).get(y) == 1){
+            // Tiles with chancies 
+            b.setBackground(Color.RED);
+        }else{
+            if ((y % 2 == 1 && x % 2 == 1)
+                    //) {
+                    || (y % 2 == 0 && x % 2 == 0)) {
+                b.setBackground(Color.WHITE);
+            } else {
+                b.setBackground(Color.BLACK);
             }
         }
     }
@@ -291,61 +308,23 @@ public class Main {
         return gui;
     }
 
-    // private final void createImages() {
-    //     try {
-    //         URL url = new URL("http://i.stack.imgur.com/memI0.png");
-    //         BufferedImage bi = ImageIO.read(url);
-    //         for (int ii = 0; ii < 2; ii++) {
-    //             for (int jj = 0; jj < 6; jj++) {
-    //                 chessPieceImages[ii][jj] = bi.getSubimage(
-    //                         jj * 64, ii * 64, 64, 64);
-    //             }
-    //         }
-    //     } catch (Exception e) {
-    //         e.printStackTrace();
-    //         System.exit(1);
-    //     }
-    // }
-
-    /**
-     * Initializes the icons of the initial chess board piece places
-     */
-    // private final void setupNewGame() {
-    //     message.setText("Make your move!");
-    //     // set up the black pieces
-    //     for (int ii = 0; ii < STARTING_ROW.length; ii++) {
-    //         chessBoardSquares[ii][0].setIcon(new ImageIcon(
-    //                 chessPieceImages[BLACK][STARTING_ROW[ii]]));
-    //     }
-    //     for (int ii = 0; ii < STARTING_ROW.length; ii++) {
-    //         chessBoardSquares[ii][1].setIcon(new ImageIcon(
-    //                 chessPieceImages[BLACK][PAWN]));
-    //     }
-    //     // set up the white pieces
-    //     for (int ii = 0; ii < STARTING_ROW.length; ii++) {
-    //         chessBoardSquares[ii][6].setIcon(new ImageIcon(
-    //                 chessPieceImages[WHITE][PAWN]));
-    //     }
-    //     for (int ii = 0; ii < STARTING_ROW.length; ii++) {
-    //         chessBoardSquares[ii][7].setIcon(new ImageIcon(
-    //                 chessPieceImages[WHITE][STARTING_ROW[ii]]));
-    //     }
-    // }
-
+    
     private void nextBoard() {
         uiBoardCounter+=1;
+        initializeGui();
+
     }
     
     public static void main(String[] args) {
         
         Main cg = new Main();
-        JFrame f = new JFrame("Where is Chancy?");
-        f.add(cg.getGui());
-        f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        f.setLocationByPlatform(true);
-        f.pack();
-        // ensures the minimum size is enforced.
-        f.setMinimumSize(f.getSize());
-        f.setVisible(true);
+        // JFrame f = new JFrame("Where is Chancy?");
+        // f.add(cg.getGui());
+        // f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        // f.setLocationByPlatform(true);
+        // f.pack();
+        // // ensures the minimum size is enforced.
+        // f.setMinimumSize(f.getSize());
+        // f.setVisible(true);
     }
 }

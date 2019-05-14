@@ -13,7 +13,7 @@ public class Coordinate {
 	}
 
 	@Override
-  public boolean equals(Object obj) {
-      return ((this.x == ((Coordinate) obj).x) && (this.y == ((Coordinate) obj).y));
-  }
+	public boolean equals(Object obj) {
+	    return ((this.x == ((Coordinate) obj).x) && (this.y == ((Coordinate) obj).y));
+	}
 }
