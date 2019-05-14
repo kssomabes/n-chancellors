@@ -157,7 +157,15 @@ public class Main {
         // tools.add(new JButton("Next")); // TODO - add functionality!
 
         tools.addSeparator();
-        tools.add(new JButton("Solve")); // TODO - add functionality!
+        // tools.add(new JButton("Solve")); // TODO - add functionality!
+        Action solveBoardAction = new AbstractAction("Solve") {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                boards.get(uiBoardCounter).solveBoard();
+            }
+        };
+        tools.add(solveBoardAction);
         // tools.addSeparator();
         // tools.add(message);
 
