@@ -318,6 +318,7 @@ public class Main {
 
     
     private void nextBoard() {
+        f.remove(gui);
         uiBoardCounter+=1;
         initializeGui();
 
