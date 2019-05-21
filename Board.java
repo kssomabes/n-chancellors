@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.BufferedWriter;
 import java.util.Scanner;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.ArrayList;
 
 public class Board {
@@ -47,6 +48,7 @@ public class Board {
 			}
 			System.out.println();
 		}
+		System.out.println();
 	}
 
 	public void printChancies(){
@@ -143,7 +145,7 @@ public class Board {
 		int [] nopts = new int[n];
 		int [][] option = new int[n][n];
 
-		int start, move, k, candidate, prev, counter = 0;
+		int start, move, k, candidate, prev, numberOfSolutions = 0;
 		move = start = 0;
 
 		for (a=0; a<n; a++){
@@ -190,7 +192,7 @@ public class Board {
 					} 
 					// Store found solution for UI
 					solutions.add(solved);
-					if (k != 1) counter++; // count only if there's an actual solution
+					if (k != 1) numberOfSolutions++; // count only if there's an actual solution
 
 				// MOVE == 1
 				}else if(move == 1){
@@ -242,7 +244,7 @@ public class Board {
 			}
 		}
 		
-		System.out.println("Number of solutions: " + counter);
+//		System.out.println("Number of solutions: " + numberOfSolutions);
 		// showSolutions();
 	}
 
@@ -259,16 +261,9 @@ public class Board {
 		this.solvable = -1; 
 		this.solutions.clear();
 	}
-
-	public void loadSolution(){
-		JFrame f = new JFrame("Solutions");
-		f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        f.setLocationByPlatform(true);
-        f.pack();
-        f.setMinimumSize(f.getSize());
-        f.setVisible(true);
-
-        
-	}
 	
+	/*modified load solution to return solutions attribute*/
+	public ArrayList<Coordinate[]> loadSolution(){
+        return solutions;
+	}
 }
