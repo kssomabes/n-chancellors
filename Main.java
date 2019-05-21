@@ -3,9 +3,11 @@ import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
 import javax.imageio.ImageIO;
 import java.io.File;
-import java.lang.module.FindException;
+// import java.lang.module.FindException;
 import java.io.BufferedWriter;
 import java.util.Scanner;
 import java.util.ArrayList;
@@ -16,6 +18,8 @@ public class Main {
     
     private JButton[][] chessBoardSquares;
     private Image[][] chessPieceImages = new Image[2][6];
+    JFileChooser jfc = new JFileChooser();
+
     private JPanel chessBoard;
     private JButton[][] solutionBoardSquares;
     private Image[][] solutionChessPieceImages = new Image[2][6];
@@ -23,7 +27,6 @@ public class Main {
     public int dimension;
     int boardCount = 0; // stores the number of boards to be read
     int currBoardCtr = 0; // current board counter
-    int uiBoardCounter = 0;
     int currentSolutionBoardCounter = 0;
     int currentNumberOfSolutions = 0;
 
@@ -37,7 +40,7 @@ public class Main {
     public static final int BLACK = 0, WHITE = 1;
 
     public Main() {
-        readFile();
+        readFile(null);
         
         f = new JFrame("Where is Chancy?");
         f.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -45,11 +48,12 @@ public class Main {
         f.pack();
         f.setMinimumSize(f.getSize());
         f.setVisible(true);
-        
+
         initializeGui();
+        loadBoard();
     }
 
-    public void readFile(){
+    public void readFile(File selectedFile){
         Scanner br1 = null;
         BufferedWriter bw = null;
         File readFile = null;
@@ -59,8 +63,19 @@ public class Main {
         int tokenCtr = 0; // token counter / y coordinate
 
         try{
-              readFile = new File("input.in");  
-              br1 = new Scanner(readFile);
+            String fileName = (selectedFile == null) ? "input.in" : selectedFile.getName(); 
+            readFile = new File(fileName);  
+            br1 = new Scanner(readFile);
+
+            boards.clear();
+            boardSizes.clear();
+            for (int i=0; i<tempBoard.size(); i++){
+                tempBoard.get(i).clear();
+            }
+
+            tempBoard.clear();
+            boardCount = 0;
+            currBoardCtr = 0; 
 
               if (br1.hasNext()){
                 // get the number of boards first
@@ -115,13 +130,12 @@ public class Main {
 				 */
 
                 Board newBoard = new Board(tempBoard, boardSizes.get(currBoardCtr), tempChancies); 
-                newBoard.printBoard();
-                System.out.println();
+                // newBoard.printBoard();
+                // System.out.println();
                 // newBoard.printChancies();
                 // System.out.println();
-                newBoard.solveBoard();
-                System.out.println();
-
+                // newBoard.solveBoard();
+                // System.out.println();
 
                 // added new board with initial chancies
                 boards.add(newBoard);
@@ -130,12 +144,12 @@ public class Main {
                 for (int i=0; i<currRowCtr; i++){
                     tempBoard.get(i).clear(); 
                 } 
+
                 tempBoard.clear();
 
                 currRowCtr = 0; // reset to the first row 
                 tokenCtr = 0; // reset token / y ctr
                 currBoardCtr++; // next board 
-                // System.out.println();
               }
 
             currBoardCtr = 0; // return to 0
@@ -152,6 +166,27 @@ public class Main {
         JToolBar tools = new JToolBar();
         tools.setFloatable(false);
         gui.add(tools, BorderLayout.PAGE_START);
+
+        JButton fileButton = new JButton("Select File");
+        fileButton.addActionListener(new ActionListener() {
+          public void actionPerformed(ActionEvent e) {
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setCurrentDirectory(new File(System.getProperty("user.home")));
+            int returnValue = fileChooser.showOpenDialog(null);
+            if (returnValue == JFileChooser.APPROVE_OPTION) {
+                File selectedFile = fileChooser.getSelectedFile();
+                System.out.println(selectedFile.getName());
+                readFile(selectedFile);
+                f.remove(gui);
+                initializeGui();
+                loadBoard();
+            }
+           
+          }
+        });
+        tools.add(fileButton);
+
+        tools.addSeparator();
 
         Action prevBoardAction = new AbstractAction("Prev") {
 
@@ -177,7 +212,7 @@ public class Main {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                boards.get(uiBoardCounter).solveBoard();
+                boards.get(currBoardCtr).solveBoard();
             }
         };
         tools.add(solveBoardAction);
@@ -188,10 +223,11 @@ public class Main {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+
             	//creates solutions board arraylist to add all solutions
             	solutionBoards.clear();
-            	boards.get(uiBoardCounter).solveBoard();
-                solutions = boards.get(uiBoardCounter).loadSolution();
+            	boards.get(currBoardCtr).solveBoard();
+                solutions = boards.get(currBoardCtr).loadSolution();
                 currentNumberOfSolutions = solutions.size();
                 while(currentSolutionBoardCounter < currentNumberOfSolutions) {
             		int dimension = boardSizes.get(currBoardCtr);
@@ -227,11 +263,13 @@ public class Main {
                 solutionFrame.setMinimumSize(solutionFrame.getSize());
                 solutionFrame.setVisible(true);
                 showSolutions();
+// TODO: Check what this is, galing daw sa stashed
+                // boards.get(currBoardCtr).loadSolution();
+
             }
         };
         tools.add(showSolBoardAction);
-        
-        loadBoard();        
+       
     }
     
     /*ALL SOLUTIONS METHODS*/
@@ -267,7 +305,7 @@ public class Main {
     }
     
     private void loadSolutionBoards() {
-    	int dimension = boardSizes.get(uiBoardCounter);
+    	int dimension = boardSizes.get(currBoardCtr);
         JButton[][] chessBoardSquares = new JButton[dimension][dimension];
 
         JPanel chessBoard = new JPanel(new GridLayout(0, dimension)) {
@@ -363,10 +401,10 @@ public class Main {
     /*ALL MAIN BOARD METHODS*/
 
     private void loadBoard(){
-        dimension = boardSizes.get(uiBoardCounter);
+        dimension = boardSizes.get(currBoardCtr);
         chessBoardSquares = new JButton[dimension][dimension];
 
-        chessBoard = new JPanel(new GridLayout(0, boardSizes.get(uiBoardCounter))) {
+        chessBoard = new JPanel(new GridLayout(0, boardSizes.get(currBoardCtr))) {
 
             /**
              * Override the preferred size to return the largest it can, in
@@ -397,7 +435,7 @@ public class Main {
             }
         };
         chessBoard.setBorder(new CompoundBorder(
-                new EmptyBorder(boardSizes.get(uiBoardCounter),boardSizes.get(uiBoardCounter),boardSizes.get(uiBoardCounter),boardSizes.get(uiBoardCounter)),
+                new EmptyBorder(boardSizes.get(currBoardCtr),boardSizes.get(currBoardCtr),boardSizes.get(currBoardCtr),boardSizes.get(currBoardCtr)),
                 new LineBorder(Color.BLACK)
                 ));
         // Set the BG to be ochre
@@ -441,11 +479,29 @@ public class Main {
         f.pack();
     }
 
+    private static Icon resizeIcon(ImageIcon icon, int resizedWidth, int resizedHeight) {
+        Image img = icon.getImage();  
+        Image resizedImage = img.getScaledInstance(resizedWidth, resizedHeight,  java.awt.Image.SCALE_SMOOTH);  
+        return new ImageIcon(resizedImage);
+    }
+
     private void setButtonColor(JButton b, int x, int y){
-        if (boards.get(uiBoardCounter).board.get(x).get(y) == 1){
+        if (boards.get(currBoardCtr).board.get(x).get(y) == 1){
             // Tiles with chancies 
-            b.setBackground(Color.RED);
-        }else{
+
+            // try {
+            //     ImageIcon img = new ImageIcon("chancy.jpg");
+
+            //     int offset = b.getInsets().left;
+            //     b.setIcon(resizeIcon(img, b.getWidth() - offset, b.getHeight() - offset));
+
+            //     // b.setIcon(new ImageIcon(img));
+            //     // b.setSize(64,64);
+            // } catch (Exception e){
+                b.setBackground(Color.RED);
+            // }
+
+        } else{
             if ((y % 2 == 1 && x % 2 == 1)
                     //) {
                     || (y % 2 == 0 && x % 2 == 0)) {
@@ -458,16 +514,27 @@ public class Main {
     
     
     private void processClick(int i, int j){
-        // uiBoardCounter holds the currently selected board, modify the board 
+        // currBoardCtr holds the currently selected board, modify the board 
         // reverse j and i because of different orientation
-        int flag = (boards.get(uiBoardCounter).chancies.contains(new Coordinate(j+1,i+1))) ? 0 : 1;
+        int flag = (boards.get(currBoardCtr).chancies.contains(new Coordinate(j+1,i+1))) ? 0 : 1;
         
         // if flag is 0, remove chancy
         // else if flag is 1, add chancy 
-        boards.get(uiBoardCounter).modifyBoard(flag, j+1, i+1); 
+        boards.get(currBoardCtr).modifyBoard(flag, j+1, i+1); 
 
-        if (flag == 1) chessBoardSquares[i][j].setBackground(Color.RED);
-        else {
+        if (flag == 1){ 
+            //  try {
+            //     ImageIcon img = new ImageIcon("chancy.jpg");
+
+            //     int offset = chessBoardSquares[i][j].getInsets().left;
+            //     chessBoardSquares[i][j].setIcon(resizeIcon(img, chessBoardSquares[i][j].getWidth() - offset, chessBoardSquares[i][j].getHeight() - offset));
+
+            //     // chessBoardSquares[i][j].setIcon(new ImageIcon(img));
+            //     // chessBoardSquares[i][j].setSize(64,64);
+            // } catch (Exception e){
+                chessBoardSquares[i][j].setBackground(Color.RED);
+            // }
+        } else {
             if ((j % 2 == 1 && i % 2 == 1) || (j % 2 == 0 && i % 2 == 0)) {
                 chessBoardSquares[i][j].setBackground(Color.WHITE);
             } else {
@@ -490,27 +557,25 @@ public class Main {
     	}
     }
 
-    public final JComponent getGui() {
-        return gui;
-    }
-
     private void nextBoard() {
         f.remove(gui);
-        if (uiBoardCounter < boardCount-1){
-            uiBoardCounter+=1;
+        if (currBoardCtr < boardCount-1){
+            currBoardCtr+=1;
             solutionBoards.clear();
         }
         initializeGui();
+        loadBoard();
 
     }
 
     private void prevBoard() {
         f.remove(gui);
-        if (uiBoardCounter >= 1){
-            uiBoardCounter-=1;
+        if (currBoardCtr >= 1){
+            currBoardCtr-=1;
             solutionBoards.clear();
         }
         initializeGui();
+        loadBoard();
     }
     
     /*EXCLUSIVE FOR SOLUTION WINDOW*/

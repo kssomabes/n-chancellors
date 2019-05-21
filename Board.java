@@ -56,6 +56,7 @@ public class Board {
 		for (Coordinate chancy : this.chancies){
 			chancy.printXY();
 		}
+		System.out.println();
 	}
 
 	public void printSolutions(){
@@ -243,6 +244,7 @@ public class Board {
 				}
 			}
 		}
+
 		
 //		System.out.println("Number of solutions: " + numberOfSolutions);
 		// showSolutions();
