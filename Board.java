@@ -18,6 +18,7 @@ public class Board {
 	ArrayList <Coordinate[]> solutions = new ArrayList <Coordinate[]>();
 	int solvable = -1; // -1 = untested, 0 = true, 1 = false -> to cache solutions
 
+	// Constructor if only dimension is given 
 	public Board(int dimension){
 		for (int i=0; i<dimension; i++){
         board.add(new ArrayList <Integer>());
@@ -28,14 +29,8 @@ public class Board {
     this.dimension = dimension;
 	}
 
+	// Constructor if board is read from file
 	public Board(ArrayList <ArrayList<Integer>> temp, int dimension, ArrayList <Coordinate> chancies){
-		// for (ArrayList<Integer> row : temp){
-		// // 	for (Integer col : row){
-		// // 		this.board.get(indexOf(row)).add(col);
-		// // 	}
-		// 	this.board.add(row);
-		// }
-
 		for (int i=0; i<temp.size(); i++){
 			this.board.add(new ArrayList<Integer>());
 			for (Integer e : temp.get(i)){
@@ -51,6 +46,7 @@ public class Board {
 		this.dimension = dimension;
 	}
 
+	/* START OF PRINT METHODS */
 	public void printBoard(){
 		for (int i=0; i<this.dimension; i++){
 			for (int j=0; j<this.dimension; j++){
@@ -102,6 +98,19 @@ public class Board {
 		System.out.println("\n");
 	}
 
+	public void showSolutions(){
+		for (int i=0; i<this.solutions.size(); i++){
+			System.out.println("Solution #" +(i+1) + ": ");
+				for (Coordinate chancy : this.solutions.get(i)){
+					chancy.printXY();
+				}
+			System.out.println();
+		}
+	}
+
+	/* END OF PRINT METHODS */
+
+	// Checker if there is a chancy in the row
 	int hasChancy(int row){
 		int i;
 
@@ -115,7 +124,8 @@ public class Board {
 		return 0;
 	}
 
-	// 0 if valid, 1 if invalid
+	// checks whether the given x,y is valid against other initial chancies
+	// 0 if valid, 1 if insvalid
 	int checkOthers(int x, int y){
 		int i;
 
@@ -135,21 +145,11 @@ public class Board {
 		return 0;
 	}
 
-	public void showSolutions(){
-		for (int i=0; i<this.solutions.size(); i++){
-			System.out.println("Solution #" +(i+1) + ": ");
-				for (Coordinate chancy : this.solutions.get(i)){
-					chancy.printXY();
-				}
-			System.out.println();
-		}
-	}
-
 	public void solveBoard(){
 
-		// INVALID INITIAL CHANCIES 
-		this.solutions.clear();
+		this.solutions.clear(); // reset the solutions in case the method is called again
 		
+		// INVALID INITIAL CHANCIES 
 		if (this.chancies.size() > this.dimension){
 			this.solvable = 1;
 		}
@@ -262,6 +262,7 @@ public class Board {
 		// showSolutions();
 	}
 
+	// For editing an element of the board
 	public void modifyBoard(int addChancy, int i, int j){
 		if (addChancy == 1){
 			this.chancies.add(new Coordinate(i, j));  

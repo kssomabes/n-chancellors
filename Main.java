@@ -20,7 +20,6 @@ public class Main {
 
     private JButton[][] chessBoardSquares;
     private Image[][] chessPieceImages = new Image[2][6];
-    JFileChooser jfc = new JFileChooser();
 
     private JPanel chessBoard;
     private JButton[][] solutionBoardSquares;
@@ -66,16 +65,17 @@ public class Main {
         int tokenCtr = 0; // token counter / y coordinate
 
         try{
+            // default file to load upon start up is input.in
             String fileName = (selectedFile == null) ? "input.in" : selectedFile.getName(); 
             readFile = new File(fileName);  
             br1 = new Scanner(readFile);
 
+            // reset the values
             boards.clear();
             boardSizes.clear();
             for (int i=0; i<tempBoard.size(); i++){
                 tempBoard.get(i).clear();
             }
-
             tempBoard.clear();
             boardCount = 0;
             currBoardCtr = 0;
@@ -119,28 +119,10 @@ public class Main {
 
                     currRowCtr++;
                 }
-				
-//				for(int i=0; i<tempBoard.size(); i++) { 
-//					for (int j = 0;j<tempBoard.get(i).size(); j++) {
-//						System.out.println("Tempboard("+(i+1)+", "+(j+1)+"): "+tempBoard.get(i).get(j)); 
-//					} 
-//				}
-				 
-				/*
-				 * System.out.println("Size: "+tempBoard.size()); for(int i=0;
-				 * i<tempBoard.size(); i++) {
-				 * System.out.println("Size2: "+tempBoard.get(i).size()); }
-				 */
 
                 Board newBoard = new Board(tempBoard, boardSizes.get(currBoardCtr), tempChancies); 
-                // newBoard.printBoard();
-                // System.out.println();
-                // newBoard.printChancies();
-                // System.out.println();
-                // newBoard.solveBoard();
-                // System.out.println();
 
-                // added new board with initial chancies
+                // add new board from read file  with initial chancies
                 boards.add(newBoard);
 
                 // delete the tempBoard
@@ -170,10 +152,9 @@ public class Main {
         tools.setFloatable(false);
         gui.add(tools, BorderLayout.PAGE_START);
 
+        // insert label, field and button for user input size
         tools.add(insertLabel);
-
         tools.add(insertField);
-
         JButton loadN = new JButton("Load Size");
         loadN.addActionListener(new ActionListener() {
             @Override
@@ -186,6 +167,7 @@ public class Main {
 
                     boardSizes.add(inputSize);
 
+                    // create new board with size inputSize
                     boards.add(new Board(inputSize));
 
                     boardCount = 1; // since only 1 board can be generated at once
@@ -199,6 +181,7 @@ public class Main {
         });
         tools.add(loadN);
 
+        // insert file chooser 
         JButton fileButton = new JButton("Select File");
         fileButton.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -217,7 +200,6 @@ public class Main {
            
           }
         });
-
         tools.add(fileButton);
 
         tools.addSeparator();
@@ -242,11 +224,12 @@ public class Main {
         
         tools.addSeparator();
         
+        // insert solve button (only shows the total number of solutions without the UI)
         Action solveBoardAction = new AbstractAction("Solve") {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                boards.get(currBoardCtr).printBoard();
+                // boards.get(currBoardCtr).printBoard();
                 boards.get(currBoardCtr).solveBoard();
             }
         };
@@ -254,6 +237,7 @@ public class Main {
 
         tools.addSeparator();
         
+        // show solution with UI
         Action showSolBoardAction = new AbstractAction("Show Solutions") {
 
             @Override
@@ -263,48 +247,51 @@ public class Main {
                 solutions.clear(); 
             	solutionBoards.clear();
             	boards.get(currBoardCtr).solveBoard();
-                currentSolutionBoardCounter = 0;
-                
-                // System.out.println("currBoardCtr " +currBoardCtr );
-                solutions = boards.get(currBoardCtr).loadSolution();
-                currentNumberOfSolutions = solutions.size();
-                while(currentSolutionBoardCounter < currentNumberOfSolutions) {
-            		int dimension = boardSizes.get(currBoardCtr);
-            		ArrayList<Coordinate> solutionChancies = new ArrayList<Coordinate>();
-            		
-            		
-            		for(int i=0; i<solutions.get(currentSolutionBoardCounter).length; i++) {
-            			tempBoard.add(new ArrayList<Integer>());
-        				solutionChancies.add(solutions.get(currentSolutionBoardCounter)[i]);
-        				for(int j=0; j<dimension; j++) {
-        					tempBoard.get(i).add(0);
-        				}
-            		}
-            		for(int i=0; i<solutions.get(currentSolutionBoardCounter).length; i++) {
-            			int x = solutions.get(currentSolutionBoardCounter)[i].x;
-            			int y = solutions.get(currentSolutionBoardCounter)[i].y;
-            			tempBoard.get(x-1).set(y-1, 1);
-            		}
-            		
-            		solutionBoards.add(new Board(tempBoard, dimension, solutionChancies));
-            		for (int i=0; i<tempBoard.size(); i++){
-                        tempBoard.get(i).clear(); 
-                    } 
-                    tempBoard.clear();	
-            		currentSolutionBoardCounter++;
-            	}
-            	currentSolutionBoardCounter = 0;
-            	
-            	solutionFrame = new JFrame("Solutions");
-            	solutionFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-                solutionFrame.setLocationByPlatform(true);
-                solutionFrame.pack();
-                solutionFrame.setMinimumSize(solutionFrame.getSize());
-                solutionFrame.setVisible(true);
-                showSolutions();
-// TODO: Check what this is, galing daw sa stashed
-                // boards.get(currBoardCtr).loadSolution();
 
+                if (boards.get(currBoardCtr).solutions.size() > 0){
+                    currentSolutionBoardCounter = 0;
+                
+                    solutions = boards.get(currBoardCtr).loadSolution();
+                    currentNumberOfSolutions = solutions.size();
+                    while(currentSolutionBoardCounter < currentNumberOfSolutions) {
+                        int dimension = boardSizes.get(currBoardCtr);
+                        ArrayList<Coordinate> solutionChancies = new ArrayList<Coordinate>();
+                        
+                        
+                        for(int i=0; i<solutions.get(currentSolutionBoardCounter).length; i++) {
+                            tempBoard.add(new ArrayList<Integer>());
+                            solutionChancies.add(solutions.get(currentSolutionBoardCounter)[i]);
+                            for(int j=0; j<dimension; j++) {
+                                tempBoard.get(i).add(0);
+                            }
+                        }
+                        for(int i=0; i<solutions.get(currentSolutionBoardCounter).length; i++) {
+                            int x = solutions.get(currentSolutionBoardCounter)[i].x;
+                            int y = solutions.get(currentSolutionBoardCounter)[i].y;
+                            tempBoard.get(x-1).set(y-1, 1);
+                        }
+                        
+                        solutionBoards.add(new Board(tempBoard, dimension, solutionChancies));
+                        for (int i=0; i<tempBoard.size(); i++){
+                            tempBoard.get(i).clear(); 
+                        } 
+                        tempBoard.clear();  
+                        currentSolutionBoardCounter++;
+                    }
+                    
+                    currentSolutionBoardCounter = 0;
+                    
+                    solutionFrame = new JFrame("Solutions");
+                    solutionFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+                    solutionFrame.setLocationByPlatform(true);
+                    solutionFrame.pack();
+                    solutionFrame.setMinimumSize(solutionFrame.getSize());
+                    solutionFrame.setVisible(true);
+                    showSolutions();
+
+                }else { 
+                    JOptionPane.showMessageDialog(null, "No solution", "Where is Chancy?", JOptionPane.ERROR_MESSAGE);
+                }
             }
         };
         tools.add(showSolBoardAction);
@@ -397,10 +384,10 @@ public class Main {
             for (int jj = 0; jj < chessBoardSquares[ii].length; jj++) {
                 JButton b = new JButton();
                 b.setMargin(buttonMargin);
-                // our chess pieces are 64x64 px in size, so we'll
+                // our chess pieces are 32x32 px in size, so we'll
                 // 'fill this in' using a transparent icon..
                 ImageIcon icon = new ImageIcon(
-                        new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));    
+                        new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB));    
                 b.setIcon(icon);
                 b.setEnabled(false);
                 solutionButtonColor(b,ii,jj);	
@@ -428,8 +415,7 @@ public class Main {
             b.setBackground(Color.RED);
         }else{
             if ((y % 2 == 1 && x % 2 == 1)
-                    //) {
-                    || (y % 2 == 0 && x % 2 == 0)) {
+                || (y % 2 == 0 && x % 2 == 0)) {
                 b.setBackground(Color.WHITE);
             } else {
                 b.setBackground(Color.BLACK);
@@ -441,7 +427,6 @@ public class Main {
 
     private void loadBoard(){
 
-        // dimension = (inputSize == 0 ) ? boardSizes.get(currBoardCtr) : inputSize;
         dimension = boardSizes.get(currBoardCtr);
 
         chessBoardSquares = new JButton[dimension][dimension];
@@ -496,10 +481,10 @@ public class Main {
             for (int jj = 0; jj < chessBoardSquares[ii].length; jj++) {
                 JButton b = new JButton();
                 b.setMargin(buttonMargin);
-                // our chess pieces are 64x64 px in size, so we'll
+                // our chess pieces are 32x32 px in size, so we'll
                 // 'fill this in' using a transparent icon..
                 ImageIcon icon = new ImageIcon(
-                        new BufferedImage(64, 64, BufferedImage.TYPE_INT_ARGB));    
+                        new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB));    
                 b.setIcon(icon);
                 setButtonColor(b,ii,jj);
                 chessBoardSquares[jj][ii] = b;
@@ -538,15 +523,14 @@ public class Main {
             //     b.setIcon(resizeIcon(img, b.getWidth() - offset, b.getHeight() - offset));
 
             //     // b.setIcon(new ImageIcon(img));
-            //     // b.setSize(64,64);
+            //     // b.setSize(32,32);
             // } catch (Exception e){
                 b.setBackground(Color.RED);
             // }
 
         } else{
-            if ((y % 2 == 1 && x % 2 == 1)
-                    //) {
-                    || (y % 2 == 0 && x % 2 == 0)) {
+            if ((y % 2 == 1 && x % 2 == 1) 
+                || (y % 2 == 0 && x % 2 == 0)) {
                 b.setBackground(Color.WHITE);
             } else {
                 b.setBackground(Color.BLACK);
@@ -572,7 +556,7 @@ public class Main {
             //     chessBoardSquares[i][j].setIcon(resizeIcon(img, chessBoardSquares[i][j].getWidth() - offset, chessBoardSquares[i][j].getHeight() - offset));
 
             //     // chessBoardSquares[i][j].setIcon(new ImageIcon(img));
-            //     // chessBoardSquares[i][j].setSize(64,64);
+            //     // chessBoardSquares[i][j].setSize(32,32);
             // } catch (Exception e){
                 chessBoardSquares[i][j].setBackground(Color.RED);
             // }
@@ -599,6 +583,7 @@ public class Main {
     	}
     }
 
+    /* METHODS FOR TRAVERSING BOARDS IN UI */
     private void nextBoard() {
         f.remove(gui);
         if (currBoardCtr < boardCount-1){
@@ -620,7 +605,7 @@ public class Main {
         loadBoard();
     }
     
-    /*EXCLUSIVE FOR SOLUTION WINDOW*/
+    /* EXCLUSIVE FOR SOLUTION WINDOW */
     private void nextSolution() {
     	solutionFrame.remove(solutionPanel);
         if (currentSolutionBoardCounter < currentNumberOfSolutions-1){
