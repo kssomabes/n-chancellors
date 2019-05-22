@@ -15,7 +15,9 @@ import java.util.ArrayList;
 public class Main {
     private JFrame f, solutionFrame;
     private JPanel gui, solutionPanel;
-    
+    JTextField insertField = new JTextField(2);
+    JLabel insertLabel = new JLabel("Insert Size:");
+
     private JButton[][] chessBoardSquares;
     private Image[][] chessPieceImages = new Image[2][6];
     JFileChooser jfc = new JFileChooser();
@@ -29,6 +31,7 @@ public class Main {
     int currBoardCtr = 0; // current board counter
     int currentSolutionBoardCounter = 0;
     int currentNumberOfSolutions = 0;
+    int inputSize = 0; // for user input size n board 
 
     ArrayList <Integer> boardSizes = new ArrayList<Integer>(); // store the board sizes
     ArrayList <Board> boards = new ArrayList<Board>();
@@ -75,7 +78,7 @@ public class Main {
 
             tempBoard.clear();
             boardCount = 0;
-            currBoardCtr = 0; 
+            currBoardCtr = 0;
 
               if (br1.hasNext()){
                 // get the number of boards first
@@ -167,6 +170,35 @@ public class Main {
         tools.setFloatable(false);
         gui.add(tools, BorderLayout.PAGE_START);
 
+        tools.add(insertLabel);
+
+        tools.add(insertField);
+
+        JButton loadN = new JButton("Load Size");
+        loadN.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+                inputSize = Integer.parseInt(insertField.getText());
+                if (inputSize > 0){
+                    boards.clear();
+                    boardSizes.clear();
+                    tempBoard.clear();
+
+                    boardSizes.add(inputSize);
+
+                    boards.add(new Board(inputSize));
+
+                    boardCount = 1; // since only 1 board can be generated at once
+                    currBoardCtr = 0; 
+
+                    f.remove(gui);
+                    initializeGui();
+                    loadBoard();
+                }
+            }
+        });
+        tools.add(loadN);
+
         JButton fileButton = new JButton("Select File");
         fileButton.addActionListener(new ActionListener() {
           public void actionPerformed(ActionEvent e) {
@@ -176,6 +208,7 @@ public class Main {
             if (returnValue == JFileChooser.APPROVE_OPTION) {
                 File selectedFile = fileChooser.getSelectedFile();
                 System.out.println(selectedFile.getName());
+                inputSize = 0;
                 readFile(selectedFile);
                 f.remove(gui);
                 initializeGui();
@@ -184,6 +217,7 @@ public class Main {
            
           }
         });
+
         tools.add(fileButton);
 
         tools.addSeparator();
@@ -212,6 +246,7 @@ public class Main {
 
             @Override
             public void actionPerformed(ActionEvent e) {
+                boards.get(currBoardCtr).printBoard();
                 boards.get(currBoardCtr).solveBoard();
             }
         };
@@ -225,8 +260,12 @@ public class Main {
             public void actionPerformed(ActionEvent e) {
 
             	//creates solutions board arraylist to add all solutions
+                solutions.clear(); 
             	solutionBoards.clear();
             	boards.get(currBoardCtr).solveBoard();
+                currentSolutionBoardCounter = 0;
+                
+                // System.out.println("currBoardCtr " +currBoardCtr );
                 solutions = boards.get(currBoardCtr).loadSolution();
                 currentNumberOfSolutions = solutions.size();
                 while(currentSolutionBoardCounter < currentNumberOfSolutions) {
@@ -269,7 +308,7 @@ public class Main {
             }
         };
         tools.add(showSolBoardAction);
-       
+
     }
     
     /*ALL SOLUTIONS METHODS*/
@@ -401,10 +440,13 @@ public class Main {
     /*ALL MAIN BOARD METHODS*/
 
     private void loadBoard(){
+
+        // dimension = (inputSize == 0 ) ? boardSizes.get(currBoardCtr) : inputSize;
         dimension = boardSizes.get(currBoardCtr);
+
         chessBoardSquares = new JButton[dimension][dimension];
 
-        chessBoard = new JPanel(new GridLayout(0, boardSizes.get(currBoardCtr))) {
+        chessBoard = new JPanel(new GridLayout(0, dimension)) {
 
             /**
              * Override the preferred size to return the largest it can, in
@@ -435,7 +477,7 @@ public class Main {
             }
         };
         chessBoard.setBorder(new CompoundBorder(
-                new EmptyBorder(boardSizes.get(currBoardCtr),boardSizes.get(currBoardCtr),boardSizes.get(currBoardCtr),boardSizes.get(currBoardCtr)),
+                new EmptyBorder(dimension,dimension,dimension,dimension),
                 new LineBorder(Color.BLACK)
                 ));
         // Set the BG to be ochre

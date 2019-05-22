@@ -18,6 +18,16 @@ public class Board {
 	ArrayList <Coordinate[]> solutions = new ArrayList <Coordinate[]>();
 	int solvable = -1; // -1 = untested, 0 = true, 1 = false -> to cache solutions
 
+	public Board(int dimension){
+		for (int i=0; i<dimension; i++){
+        board.add(new ArrayList <Integer>());
+        for (int j=0; j<dimension; j++){
+            board.get(i).add(0);
+        }
+    }
+    this.dimension = dimension;
+	}
+
 	public Board(ArrayList <ArrayList<Integer>> temp, int dimension, ArrayList <Coordinate> chancies){
 		// for (ArrayList<Integer> row : temp){
 		// // 	for (Integer col : row){
@@ -138,6 +148,8 @@ public class Board {
 	public void solveBoard(){
 
 		// INVALID INITIAL CHANCIES 
+		this.solutions.clear();
+		
 		if (this.chancies.size() > this.dimension){
 			this.solvable = 1;
 		}
@@ -246,7 +258,7 @@ public class Board {
 		}
 
 		
-//		System.out.println("Number of solutions: " + numberOfSolutions);
+		System.out.println("Number of solutions: " + numberOfSolutions);
 		// showSolutions();
 	}
 
