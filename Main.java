@@ -296,6 +296,7 @@ public class Main {
         };
         tools.add(showSolBoardAction);
 
+
     }
     
     /*ALL SOLUTIONS METHODS*/
@@ -325,7 +326,9 @@ public class Main {
             }
         };
         solutionTools.add(nextSolutionAction);
-        
+        JLabel solCtr = new JLabel("Solutions: " + boards.get(currBoardCtr).solutions.size());
+
+        solutionTools.add(solCtr);
 //        solutionFrame.add(solutionPanel);
         loadSolutionBoards();
     }
